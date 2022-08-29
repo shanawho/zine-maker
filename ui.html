@@ -1,0 +1,306 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+
+<div class="panel">
+  <div class="inputs">
+
+    <div class="labeled-field">
+      <input id="zine-pages" value="8"></input>
+      <p>Zine pages</p>
+    </div>
+
+    <div class="equal">=</div>
+
+    <div class="labeled-field">
+      <input id="print-pages" value="1"></input>
+      <p>Printer pages</p>
+    </div>
+    <!-- <select name="pages">
+      <option value="zine">Zine pages</option>
+      <option value="print">Printer pages</option>
+    </select> -->
+
+  </div>
+  <button id="create-button">Create template</button>
+</div>
+
+
+<div id="info" class="panel">
+  <div id="how-btn">
+    <h1>How does it work?</h1>
+
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M7.646 9.708L4.646 6.708L5.354 6L8 8.647L10.646 6L11.354 6.708L8.354 9.708L8 10.061L7.646 9.708Z" fill="black" fill-opacity="0.9"/>
+    </svg>    
+  </div>
+  <div id="instructions">
+    The template will lay out zine spreads in expected page order, with a component for each zine page. Place your content into these components.
+    <br /><br />
+    Separately, Zine Maker will generate printer page layouts using instances of those components. For example:
+
+    <div class="drawing">
+      <div class="cut-text">Cut</div>
+      <div class="cut-line"></div>
+      <div class="fold"></div>
+      <div class="fold"></div>
+      <div class="sheet front">
+        <div class="title">Front</div>
+        <span>8</span>
+        <span>1</span>
+        <span>6</span>
+        <span>3</span>
+      </div>
+
+      <div class="sheet back">
+        <div class="title">Back</div>
+        <span>2</span>
+        <span>4</span>
+        <span>7</span>
+        <span>5</span>
+      </div>
+    </div>
+
+    Each side of an 8.5x11 printer page contains 4 zine pages, laid out so they print in the correct order.
+    Print double-sided, cut, and fold to create your zine.
+    <br /><br />
+    Because zines are created double-sided, any increment of zine pages that is not a multiple of 8 will round up so that printer pages are printed correctly.
+  </div>
+</div>
+
+
+
+<script>
+
+
+document.getElementById("print-pages").onchange = () => {
+  var count = parseInt(document.getElementById("print-pages").value, 10);
+  document.getElementById("zine-pages").value = count*8;
+}
+
+
+document.getElementById("zine-pages").onchange = () => {
+  var count = parseInt(document.getElementById("zine-pages").value, 10);
+  document.getElementById("print-pages").value = Math.ceil(count/8);
+  console.log(count/8, Math.ceil(count/8))
+}
+
+document.getElementById('create-button').onclick = () => {
+  var textbox = document.getElementById("print-pages");
+  var count = parseInt(textbox.value, 10);
+  parent.postMessage({ pluginMessage: { type: 'create-design-layout', count  }}, '*')
+}
+
+document.getElementById('how-btn').onclick = () => {
+  document.getElementById('info').classList.toggle("active");
+}
+
+
+// document.getElementById('print').onclick = () => {
+//   parent.postMessage({ pluginMessage: { type: 'create-print-layout' } }, '*')
+// }
+
+</script>
+
+<style>
+  * {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    font-weight: semi-bold;
+  }
+
+  #instructions {
+    height: 0;
+    opacity: 0;
+    display: none;
+    width: 100%;
+    line-height: 160%;
+  }
+
+  #info.active #instructions {
+    height: auto;
+    opacity: 1;
+    display: block;
+    transition: height .25s, opacity .25s;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .panel:nth-child(1) {
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  .inputs {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+  }
+
+  input {
+    width: 100%;
+    height: 28px;
+    padding: 8px;
+    border: 1px solid #E6E6E6;
+    border-radius: 2px;
+  }
+
+  input:focus {
+    outline: 1px solid #009CFF;
+    border: 1px solid #009CFF;
+    outline-offset: -2px;
+  }
+
+  .equal {
+    height: 64px;
+  }
+
+  select {
+    height: 32px;
+    border-radius: 2px;
+    width: 80px;
+  }
+
+
+  .labeled-field {
+    flex: 1;
+    display: inline-block;
+  }
+
+  .equal {
+    margin: 0 8px;
+  }
+
+  #create-button {
+    display: block;
+    border: 1px solid black;
+    background: none;
+    height: 28px;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  #how-btn {
+    height: 32px;
+    position: relative;
+    padding: 8px;
+    margin-left: -8px;
+    width: 224px;
+    font-weight: 500;
+  }
+
+  svg {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    transform: rotate(-90deg);
+    transition: transform .25s;
+  }
+
+  #info.active #how-btn svg {
+    transform: rotate(0deg);
+    transition: transform .25s;
+  }
+
+  h1 {
+    margin: 0;
+    margin-top: 2px;
+  }
+
+  .drawing {
+    display: flex;
+    position: relative;
+    justify-content: space-around;
+    margin: 32px 20px 16px 20px;
+  }
+
+  .cut-text {
+    position: absolute;
+    left: -20px;
+    top: 32px;
+    color: #b8b8b8;
+  }
+
+  .cut-line {
+    width: 98%;
+    height: 1px;
+    position: absolute;
+    left: 1%;
+    border: #b8b8b8 dashed 0.5px;
+    bottom: 42px;
+  }
+
+  .fold {
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    border: #888888 solid 0.5px;
+  }
+
+  .fold:nth-child(odd) {
+    left: 42px;
+  }
+
+  .fold:nth-child(even) {
+    right: 42px;
+  }
+
+  .sheet {
+    width: 64px;
+    height: 84px;
+    border: 1px solid #888888;
+    position: relative;
+    display: inline-block;
+  }
+
+  .sheet .title {
+    margin: 0 auto;
+    display: block;
+    position: absolute;
+    top:-24px;
+    width: 100%;
+    text-align: center;
+  }
+
+  span {
+    display: block;
+    width: 32px;
+    height: 42px;
+    position: absolute;
+    text-align: center;
+    line-height: 42px;
+  }
+
+  span:nth-child(2) {
+    top: 0;
+    left: 0;
+  }
+
+  span:nth-child(3) {
+    top: 0;
+    left: 50%;
+  }
+
+  span:nth-child(4) {
+    top: 50%;
+    left: 0;
+  }
+
+  span:nth-child(5) {
+    top: 50%;
+    left: 50%;
+    border: 2px
+  }
+</style>
